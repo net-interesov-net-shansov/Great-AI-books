@@ -1,4 +1,8 @@
-import numpy, scipy.special, matplotlib.pyplot
+import numpy, scipy.special, scipy.misc, time, aiogram
+import os
+from PIL import Image
+
+start = time.time()
 
 class neuralNetwork:
 
@@ -64,9 +68,9 @@ class neuralNetwork:
         return final_outputs
         
 inputNodes = 784
-hiddenNodes= 100
+hiddenNodes= 500
 outputNodes = 10
-learningRate = 0.3
+learningRate = 0.1
 
 n = neuralNetwork(inputNodes, hiddenNodes, outputNodes, learningRate)
 
@@ -80,16 +84,18 @@ training_data_file.close()
 
 
 # перебрать все записи в тренировочном наборе данных
-for record in training_data_list:
-    # получить список значений, используя символы запятой (',') в качестве разделителей
-    all_values = record.split(',')
-    # масштабировать и сместить входные значения
-    inputs = (numpy.asarray((all_values[1:]), dtype=float) / 255.0 * 0.99) + 0.01
-    # создать целевые выходные значения (все равны 0,01, за исключением желаемого маркерного значения, равного 0,99)
-    targets = numpy.zeros(outputNodes) + 0.01
-    # all_values[0] - целевое маркерное значение для данной записи
-    targets[int(all_values[0])] = 0.99
-    n.train(inputs, targets)
+iterations = 5
+for i in range(iterations):
+    for record in training_data_list:
+        # получить список значений, используя символы запятой (',') в качестве разделителей
+        all_values = record.split(',')
+        # масштабировать и сместить входные значения
+        inputs = (numpy.asarray((all_values[1:]), dtype=float) / 255.0 * 0.99) + 0.01
+        # создать целевые выходные значения (все равны 0,01, за исключением желаемого маркерного значения, равного 0,99)
+        targets = numpy.zeros(outputNodes) + 0.01
+        # all_values[0] - целевое маркерное значение для данной записи
+        targets[int(all_values[0])] = 0.99
+        n.train(inputs, targets)
 
 # загрузить в список тестовый набор данных CSV-файла набора MNIST 
 test_data_file = open("mnist_dataset/mnist_test.csv", 'r')
@@ -123,3 +129,25 @@ for record in test_data_list:
         scorecard.append(0) 
 scorecard_array = numpy.asarray(scorecard, dtype=float)
 print ("эффективность = ", scorecard_array.sum() / len(scorecard))
+
+
+
+def convert_and_resize_images(folder_path):
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".bmp"):
+            # Открываем изображение
+            img = Image.open(os.path.join(folder_path, filename))
+            # Масштабируем до 28x28 пикселей
+            img = img.resize((28, 28), Image.ANTIALIAS)
+            # Конвертируем в PNG и сохраняем
+            new_filename = os.path.splitext(filename)[0] + ".png"
+            new_folder_path = ('/mnist_dataset/test_photo_12_12_png')
+            img.save(os.path.join(new_folder_path, new_filename), "PNG")
+convert_and_resize_images('/mnist_dataset/test_photo_12_12_jpg')
+
+
+
+
+
+finish = time.time()
+print(f"Время выполнения = {finish-start}")
