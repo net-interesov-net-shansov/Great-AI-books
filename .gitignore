@@ -1,2 +1,7 @@
 /venv
 /mnist_dataset
+/AI_by_Francois_Chollet/audio_ml/train/
+/AI_by_Francois_Chollet/image_ml/fashion-mnist_test.csv
+/AI_by_Francois_Chollet/image_ml/new-fashion-mnist_test.csv
+/AI_by_Francois_Chollet/отборочный/fashion-mnist_train.csv
+/AI_by_Francois_Chollet/отборочный/new-fashion-mnist_train.csv
